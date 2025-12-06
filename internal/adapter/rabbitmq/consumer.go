@@ -1,11 +1,9 @@
-// internal/adapter/rabbitmq/consumer.go
 package rabbitmq
 
 import (
 	"context"
 	"fmt"
-
-	"github.com/YelzhanWeb/pizzas/internal/interfaces"
+	"wheres-my-pizza/internal/interfaces"
 )
 
 type consumer struct {

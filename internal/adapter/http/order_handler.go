@@ -3,10 +3,8 @@ package http
 import (
 	"encoding/json"
 	"net/http"
-
-	"github.com/YelzhanWeb/pizzas/internal/adapter/logger"
-
-	"github.com/YelzhanWeb/pizzas/internal/interfaces"
+	"wheres-my-pizza/internal/adapter/logger"
+	"wheres-my-pizza/internal/interfaces"
 )
 
 type OrderHandler struct {

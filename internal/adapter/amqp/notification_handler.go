@@ -4,9 +4,8 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
-
-	"github.com/YelzhanWeb/pizzas/internal/adapter/logger"
-	"github.com/YelzhanWeb/pizzas/internal/interfaces"
+	"wheres-my-pizza/internal/adapter/logger"
+	"wheres-my-pizza/internal/interfaces"
 )
 
 type NotificationHandler struct {

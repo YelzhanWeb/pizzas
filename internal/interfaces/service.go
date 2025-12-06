@@ -3,8 +3,7 @@ package interfaces
 import (
 	"context"
 	"time"
-
-	"github.com/YelzhanWeb/pizzas/internal/domain"
+	"wheres-my-pizza/internal/domain"
 )
 
 // Интерфейсы Сервисов (Business Logic)

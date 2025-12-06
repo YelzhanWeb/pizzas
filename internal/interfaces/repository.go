@@ -2,8 +2,7 @@ package interfaces
 
 import (
 	"context"
-
-	"github.com/YelzhanWeb/pizzas/internal/domain"
+	"wheres-my-pizza/internal/domain"
 )
 
 // Интерфейсы Репозиториев (Adapter/Postgres)

@@ -5,10 +5,9 @@ import (
 	"fmt"
 	"strings"
 	"time"
-
-	"github.com/YelzhanWeb/pizzas/internal/adapter/logger"
-	"github.com/YelzhanWeb/pizzas/internal/domain"
-	"github.com/YelzhanWeb/pizzas/internal/interfaces"
+	"wheres-my-pizza/internal/adapter/logger"
+	"wheres-my-pizza/internal/domain"
+	"wheres-my-pizza/internal/interfaces"
 )
 
 type Service struct {

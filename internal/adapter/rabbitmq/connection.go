@@ -1,10 +1,9 @@
-// internal/adapter/rabbitmq/connection.go
 package rabbitmq
 
 import (
 	"fmt"
+	"wheres-my-pizza/internal/config"
 
-	"github.com/YelzhanWeb/pizzas/internal/config"
 	amqp "github.com/rabbitmq/amqp091-go"
 )
 
