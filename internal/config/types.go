@@ -1,4 +1,3 @@
-// internal/config/types.go
 package config
 
 type Config struct {

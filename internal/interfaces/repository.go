@@ -2,6 +2,7 @@ package interfaces
 
 import (
 	"context"
+
 	"wheres-my-pizza/internal/domain"
 )
 
@@ -13,6 +14,7 @@ type OrderRepository interface {
 	Update(ctx context.Context, order *domain.Order) error
 	LogStatus(ctx context.Context, orderID int, status domain.Status, changedBy string) error
 	GetStatusHistory(ctx context.Context, orderID int) ([]*domain.StatusLog, error)
+	UpdateStatusWithLog(ctx context.Context, order *domain.Order, status domain.Status, changedBy string) error
 }
 
 type WorkerRepository interface {

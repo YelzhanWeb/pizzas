@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"strings"
 	"time"
+
 	"wheres-my-pizza/internal/adapter/logger"
 	"wheres-my-pizza/internal/domain"
 	"wheres-my-pizza/internal/interfaces"
@@ -172,14 +173,8 @@ func (s *Service) updateStatusAndNotify(ctx context.Context, order *domain.Order
 		return err
 	}
 
-	// Обновляем в БД (Orders + Log)
-	// Примечание: В идеале это должно быть в одной транзакции внутри репозитория,
-	// но используем отдельные методы для простоты, так как репозиторий уже написан.
-	if err := s.orderRepo.Update(ctx, order); err != nil {
-		return fmt.Errorf("failed to update order: %w", err)
-	}
-	if err := s.orderRepo.LogStatus(ctx, order.ID, newStatus, s.workerName); err != nil {
-		return fmt.Errorf("failed to log status: %w", err)
+	if err := s.orderRepo.UpdateStatusWithLog(ctx, order, newStatus, s.workerName); err != nil {
+		return fmt.Errorf("failed to update order status: %w", err)
 	}
 
 	// Отправляем уведомление

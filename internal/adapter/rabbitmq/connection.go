@@ -2,6 +2,8 @@ package rabbitmq
 
 import (
 	"fmt"
+	"sync"
+
 	"wheres-my-pizza/internal/config"
 
 	amqp "github.com/rabbitmq/amqp091-go"
@@ -10,6 +12,8 @@ import (
 type Connection interface {
 	Channel() (Channel, error)
 	Close() error
+	NotifyClose() <-chan *amqp.Error
+	IsClosed() bool
 }
 
 type Channel interface {
@@ -20,6 +24,7 @@ type Channel interface {
 	Consume(queue, consumer string, autoAck, exclusive, noLocal, noWait bool, args amqp.Table) (<-chan amqp.Delivery, error)
 	Qos(prefetchCount, prefetchSize int, global bool) error
 	Close() error
+	NotifyClose() <-chan *amqp.Error
 }
 
 type Queue struct {
@@ -29,7 +34,10 @@ type Queue struct {
 }
 
 type amqpConnection struct {
-	conn *amqp.Connection
+	conn   *amqp.Connection
+	cfg    config.RabbitMQConfig
+	mu     sync.RWMutex
+	closed bool
 }
 
 type amqpChannel struct {
@@ -45,10 +53,21 @@ func Connect(cfg config.RabbitMQConfig) (Connection, error) {
 		return nil, fmt.Errorf("failed to connect to RabbitMQ: %w", err)
 	}
 
-	return &amqpConnection{conn: conn}, nil
+	return &amqpConnection{
+		conn:   conn,
+		cfg:    cfg,
+		closed: false,
+	}, nil
 }
 
 func (c *amqpConnection) Channel() (Channel, error) {
+	c.mu.RLock()
+	defer c.mu.RUnlock()
+
+	if c.closed {
+		return nil, fmt.Errorf("connection is closed")
+	}
+
 	ch, err := c.conn.Channel()
 	if err != nil {
 		return nil, fmt.Errorf("failed to open channel: %w", err)
@@ -57,7 +76,52 @@ func (c *amqpConnection) Channel() (Channel, error) {
 }
 
 func (c *amqpConnection) Close() error {
-	return c.conn.Close()
+	c.mu.Lock()
+	defer c.mu.Unlock()
+
+	c.closed = true
+	if c.conn != nil && !c.conn.IsClosed() {
+		return c.conn.Close()
+	}
+	return nil
+}
+
+func (c *amqpConnection) NotifyClose() <-chan *amqp.Error {
+	c.mu.RLock()
+	defer c.mu.RUnlock()
+
+	if c.conn != nil {
+		return c.conn.NotifyClose(make(chan *amqp.Error, 1))
+	}
+	ch := make(chan *amqp.Error, 1)
+	close(ch)
+	return ch
+}
+
+func (c *amqpConnection) IsClosed() bool {
+	c.mu.RLock()
+	defer c.mu.RUnlock()
+	return c.closed || c.conn.IsClosed()
+}
+
+func (c *amqpConnection) reconnect() error {
+	c.mu.Lock()
+	defer c.mu.Unlock()
+
+	if c.closed {
+		return fmt.Errorf("connection permanently closed")
+	}
+
+	url := fmt.Sprintf("amqp://%s:%s@%s:%d/",
+		c.cfg.User, c.cfg.Password, c.cfg.Host, c.cfg.Port)
+
+	conn, err := amqp.Dial(url)
+	if err != nil {
+		return fmt.Errorf("failed to reconnect to RabbitMQ: %w", err)
+	}
+
+	c.conn = conn
+	return nil
 }
 
 func (ch *amqpChannel) ExchangeDeclare(name, kind string, durable, autoDelete, internal, noWait bool, args amqp.Table) error {
@@ -90,4 +154,8 @@ func (ch *amqpChannel) Qos(prefetchCount, prefetchSize int, global bool) error {
 
 func (ch *amqpChannel) Close() error {
 	return ch.ch.Close()
+}
+
+func (ch *amqpChannel) NotifyClose() <-chan *amqp.Error {
+	return ch.ch.NotifyClose(make(chan *amqp.Error, 1))
 }

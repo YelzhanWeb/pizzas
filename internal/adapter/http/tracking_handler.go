@@ -5,6 +5,7 @@ import (
 	"net/http"
 	"strings"
 	"time"
+
 	"wheres-my-pizza/internal/adapter/logger"
 	"wheres-my-pizza/internal/interfaces"
 )
@@ -45,6 +46,11 @@ func (h *TrackingHandler) HandleOrders(w http.ResponseWriter, r *http.Request) {
 }
 
 func (h *TrackingHandler) getOrderStatus(w http.ResponseWriter, r *http.Request, orderNumber string) {
+	if r.Method != http.MethodGet {
+		http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
+		return
+	}
+
 	result, err := h.service.GetOrderStatus(r.Context(), orderNumber)
 	if err != nil {
 		http.Error(w, "Order not found", http.StatusNotFound)
@@ -64,6 +70,11 @@ func (h *TrackingHandler) getOrderStatus(w http.ResponseWriter, r *http.Request,
 }
 
 func (h *TrackingHandler) getOrderHistory(w http.ResponseWriter, r *http.Request, orderNumber string) {
+	if r.Method != http.MethodGet {
+		http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
+		return
+	}
+
 	history, err := h.service.GetOrderHistory(r.Context(), orderNumber)
 	if err != nil {
 		http.Error(w, "Order not found", http.StatusNotFound)
@@ -84,6 +95,11 @@ func (h *TrackingHandler) getOrderHistory(w http.ResponseWriter, r *http.Request
 }
 
 func (h *TrackingHandler) GetWorkersStatus(w http.ResponseWriter, r *http.Request) {
+	if r.Method != http.MethodGet {
+		http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
+		return
+	}
+
 	h.logger.Debug("request_received", "Workers status requested", "", nil)
 
 	workers, err := h.service.GetWorkersStatus(r.Context())

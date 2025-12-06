@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 	"time"
+
 	"wheres-my-pizza/internal/domain"
 	"wheres-my-pizza/internal/interfaces"
 )
@@ -194,4 +195,26 @@ func (r *orderRepository) LogStatus(ctx context.Context, orderID int, status dom
 		return fmt.Errorf("failed to log status: %w", err)
 	}
 	return nil
+}
+
+func (r *orderRepository) UpdateStatusWithLog(ctx context.Context, order *domain.Order, status domain.Status, changedBy string) error {
+	tx, err := r.db.Begin(ctx)
+	if err != nil {
+		return fmt.Errorf("failed to begin transaction: %w", err)
+	}
+	defer tx.Rollback(ctx)
+
+	query := `UPDATE orders SET status = $1, processed_by = $2, updated_at = $3, completed_at = $4 WHERE id = $5`
+	_, err = tx.Exec(ctx, query, order.Status, order.ProcessedBy, order.UpdatedAt, order.CompletedAt, order.ID)
+	if err != nil {
+		return fmt.Errorf("failed to update order: %w", err)
+	}
+
+	logQuery := `INSERT INTO order_status_log (order_id, status, changed_by, changed_at) VALUES ($1, $2, $3, $4)`
+	_, err = tx.Exec(ctx, logQuery, order.ID, status, changedBy, time.Now())
+	if err != nil {
+		return fmt.Errorf("failed to log status: %w", err)
+	}
+
+	return tx.Commit(ctx)
 }
