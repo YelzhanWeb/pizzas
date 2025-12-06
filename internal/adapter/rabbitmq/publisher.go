@@ -4,8 +4,8 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
-	"restaurant-system/internal/interfaces"
 
+	"github.com/YelzhanWeb/pizzas/internal/interfaces"
 	amqp "github.com/rabbitmq/amqp091-go"
 )
 

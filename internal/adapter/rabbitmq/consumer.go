@@ -4,7 +4,8 @@ package rabbitmq
 import (
 	"context"
 	"fmt"
-	"restaurant-system/internal/interfaces"
+
+	"github.com/YelzhanWeb/pizzas/internal/interfaces"
 )
 
 type consumer struct {

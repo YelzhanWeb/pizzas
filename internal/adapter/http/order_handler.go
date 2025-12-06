@@ -3,8 +3,10 @@ package http
 import (
 	"encoding/json"
 	"net/http"
-	"wheres-my-pizza/internal/adapter/logger"
-	"wheres-my-pizza/internal/interfaces"
+
+	"github.com/YelzhanWeb/pizzas/internal/adapter/logger"
+
+	"github.com/YelzhanWeb/pizzas/internal/interfaces"
 )
 
 type OrderHandler struct {
@@ -45,9 +47,10 @@ func (h *OrderHandler) CreateOrder(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	// FIX: Use result.Number instead of result.OrderNumber (Domain model field is Number)
 	resp := CreateOrderResponse{
-		OrderNumber: result.OrderNumber,
-		Status:      result.Status,
+		OrderNumber: result.Number,
+		Status:      string(result.Status), // Convert domain.Status to string
 		TotalAmount: result.TotalAmount,
 	}
 

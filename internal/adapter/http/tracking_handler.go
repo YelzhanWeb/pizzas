@@ -5,8 +5,10 @@ import (
 	"net/http"
 	"strings"
 	"time"
-	"wheres-my-pizza/internal/adapter/logger"
-	"wheres-my-pizza/internal/interfaces"
+
+	"github.com/YelzhanWeb/pizzas/internal/adapter/logger"
+
+	"github.com/YelzhanWeb/pizzas/internal/interfaces"
 )
 
 type TrackingHandler struct {
@@ -23,7 +25,7 @@ func NewTrackingHandler(service interfaces.TrackingService, logger logger.Logger
 
 func (h *TrackingHandler) HandleOrders(w http.ResponseWriter, r *http.Request) {
 	requestID := time.Now().UnixNano()
-	h.logger.Debug("request_received", "Request received", string(requestID), map[string]interface{}{
+	h.logger.Debug("request_received", "Request received", string(rune(requestID)), map[string]interface{}{
 		"path": r.URL.Path,
 	})
 
@@ -74,7 +76,7 @@ func (h *TrackingHandler) getOrderHistory(w http.ResponseWriter, r *http.Request
 	for i, log := range history {
 		resp[i] = map[string]interface{}{
 			"status":     log.Status,
-			"timestamp":  log.Timestamp,
+			"timestamp":  log.ChangedAt,
 			"changed_by": log.ChangedBy,
 		}
 	}
@@ -84,8 +86,7 @@ func (h *TrackingHandler) getOrderHistory(w http.ResponseWriter, r *http.Request
 }
 
 func (h *TrackingHandler) GetWorkersStatus(w http.ResponseWriter, r *http.Request) {
-	requestID := time.Now().UnixNano()
-	h.logger.Debug("request_received", "Workers status requested", string(requestID), nil)
+	h.logger.Debug("request_received", "Workers status requested", "", nil)
 
 	workers, err := h.service.GetWorkersStatus(r.Context())
 	if err != nil {
