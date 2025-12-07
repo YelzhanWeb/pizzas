@@ -3,7 +3,8 @@ package interfaces
 import (
 	"context"
 	"time"
-	"wheres-my-pizza/internal/domain"
+
+	"github.com/YelzhanWeb/pizzas/internal/domain"
 )
 
 // Сообщения RabbitMQ

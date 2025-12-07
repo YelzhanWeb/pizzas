@@ -7,8 +7,8 @@ import (
 	"regexp"
 	"strings"
 
-	"wheres-my-pizza/internal/adapter/logger"
-	"wheres-my-pizza/internal/interfaces"
+	"github.com/YelzhanWeb/pizzas/internal/adapter/logger"
+	"github.com/YelzhanWeb/pizzas/internal/interfaces"
 )
 
 type OrderHandler struct {

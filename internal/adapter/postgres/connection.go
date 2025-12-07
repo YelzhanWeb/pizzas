@@ -3,8 +3,8 @@ package postgres
 import (
 	"context"
 	"fmt"
-	"wheres-my-pizza/internal/config"
 
+	"github.com/YelzhanWeb/pizzas/internal/config"
 	"github.com/jackc/pgx/v5"
 	"github.com/jackc/pgx/v5/pgxpool"
 )

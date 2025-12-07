@@ -4,7 +4,8 @@ import (
 	"fmt"
 	"net/http"
 	"time"
-	"wheres-my-pizza/internal/adapter/logger"
+
+	"github.com/YelzhanWeb/pizzas/internal/adapter/logger"
 )
 
 func LoggingMiddleware(logger logger.Logger) func(http.Handler) http.Handler {

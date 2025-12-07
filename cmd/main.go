@@ -10,16 +10,17 @@ import (
 	"os/signal"
 	"syscall"
 	"time"
-	"wheres-my-pizza/internal/adapter/logger"
-	"wheres-my-pizza/internal/adapter/postgres"
-	"wheres-my-pizza/internal/adapter/rabbitmq"
-	"wheres-my-pizza/internal/app/kitchen"
-	"wheres-my-pizza/internal/app/order"
-	"wheres-my-pizza/internal/app/tracking"
-	"wheres-my-pizza/internal/config"
 
-	amqpAdapter "wheres-my-pizza/internal/adapter/amqp"
-	httpAdapter "wheres-my-pizza/internal/adapter/http"
+	"github.com/YelzhanWeb/pizzas/internal/adapter/logger"
+	"github.com/YelzhanWeb/pizzas/internal/adapter/postgres"
+	"github.com/YelzhanWeb/pizzas/internal/adapter/rabbitmq"
+	"github.com/YelzhanWeb/pizzas/internal/app/kitchen"
+	"github.com/YelzhanWeb/pizzas/internal/app/order"
+	"github.com/YelzhanWeb/pizzas/internal/app/tracking"
+	"github.com/YelzhanWeb/pizzas/internal/config"
+
+	amqpAdapter "github.com/YelzhanWeb/pizzas/internal/adapter/amqp"
+	httpAdapter "github.com/YelzhanWeb/pizzas/internal/adapter/http"
 )
 
 func main() {
